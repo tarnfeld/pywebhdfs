@@ -79,7 +79,7 @@ class PyWebHdfsClient(object):
         # make the initial CREATE call to the HDFS namenode
         optional_args = kwargs
         uri = self._create_uri(path, operations.CREATE, **optional_args)
-        init_response = requests.put(uri, allow_redirects=False)
+        init_response = self._put(uri, allow_redirects=False)
 
         if not init_response.status_code == httplib.TEMPORARY_REDIRECT:
             _raise_pywebhdfs_exception(
@@ -89,7 +89,7 @@ class PyWebHdfsClient(object):
         # initial response from the namenode and make the CREATE request
         # to the datanode
         uri = init_response.headers['location']
-        response = requests.put(
+        response = self._put(
             uri, data=file_data,
             headers={'content-type': 'application/octet-stream'})
 
@@ -134,7 +134,7 @@ class PyWebHdfsClient(object):
         # make the initial APPEND call to the HDFS namenode
         optional_args = kwargs
         uri = self._create_uri(path, operations.APPEND, **optional_args)
-        init_response = requests.post(uri, allow_redirects=False)
+        init_response = self._post(uri, allow_redirects=False)
 
         if not init_response.status_code == httplib.TEMPORARY_REDIRECT:
             _raise_pywebhdfs_exception(
@@ -144,7 +144,7 @@ class PyWebHdfsClient(object):
         # initial response from the namenode and make the APPEND request
         # to the datanode
         uri = init_response.headers['location']
-        response = requests.post(
+        response = self._post(
             uri, data=file_data,
             headers={'content-type': 'application/octet-stream'})
 
@@ -181,7 +181,7 @@ class PyWebHdfsClient(object):
         optional_args = kwargs
         uri = self._create_uri(path, operations.OPEN, **optional_args)
 
-        response = requests.get(uri, allow_redirects=True)
+        response = self._get(uri, allow_redirects=True)
 
         if not response.status_code == httplib.OK:
             _raise_pywebhdfs_exception(response.status_code, response.content)
@@ -214,7 +214,7 @@ class PyWebHdfsClient(object):
         optional_args = kwargs
         uri = self._create_uri(path, operations.MKDIRS, **optional_args)
 
-        response = requests.put(uri, allow_redirects=True)
+        response = self._put(uri, allow_redirects=True)
 
         if not response.status_code == httplib.OK:
             _raise_pywebhdfs_exception(response.status_code, response.content)
@@ -244,7 +244,7 @@ class PyWebHdfsClient(object):
         uri = self._create_uri(path, operations.RENAME,
                                destination=destination_path)
 
-        response = requests.put(uri, allow_redirects=True)
+        response = self._put(uri, allow_redirects=True)
 
         if not response.status_code == httplib.OK:
             _raise_pywebhdfs_exception(response.status_code, response.content)
@@ -275,7 +275,7 @@ class PyWebHdfsClient(object):
         """
 
         uri = self._create_uri(path, operations.DELETE, recursive=recursive)
-        response = requests.delete(uri, allow_redirects=True)
+        response = self._delete(uri, allow_redirects=True)
 
         if not response.status_code == httplib.OK:
             _raise_pywebhdfs_exception(response.status_code, response.content)
@@ -333,7 +333,7 @@ class PyWebHdfsClient(object):
         """
 
         uri = self._create_uri(path, operations.GETFILESTATUS)
-        response = requests.get(uri, allow_redirects=True)
+        response = self._get(uri, allow_redirects=True)
 
         if not response.status_code == httplib.OK:
             _raise_pywebhdfs_exception(response.status_code, response.content)
@@ -389,7 +389,7 @@ class PyWebHdfsClient(object):
         """
 
         uri = self._create_uri(path, operations.LISTSTATUS)
-        response = requests.get(uri, allow_redirects=True)
+        response = self._get(uri, allow_redirects=True)
 
         if not response.status_code == httplib.OK:
             _raise_pywebhdfs_exception(response.status_code, response.content)
