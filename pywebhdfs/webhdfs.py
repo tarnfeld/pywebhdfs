@@ -32,6 +32,7 @@ class PyWebHdfsClient(object):
         self.host = host
         self.port = port
         self.user_name = user_name
+        self.session = requests.Session()
 
         # create base uri to be used in request operations
         self.base_uri = 'http://{host}:{port}/webhdfs/v1/'.format(
@@ -429,6 +430,18 @@ class PyWebHdfsClient(object):
             auth=auth_param)
 
         return uri
+
+    def _put(self, *args, **kwargs):
+        return self.session.put(*args, **kwargs)
+
+    def _post(self, *args, **kwargs):
+        return self.session.post(*args, **kwargs)
+
+    def _get(self, *args, **kwargs):
+        return self.session.get(*args, **kwargs)
+
+    def _delete(self, *args, **kwargs):
+        return self.session.delete(*args, **kwargs)
 
 
 def _raise_pywebhdfs_exception(resp_code, message=None):
